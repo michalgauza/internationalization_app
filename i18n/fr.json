@@ -1,4 +1,6 @@
 {
-  "title": "Bonjour!",
-  "message": "c'est Français"
+  "message": "Français",
+  "title": "Citations de programmation",
+  "fetch_button": "obtenir un devis",
+  "welcome": "Bonjour!"
 }

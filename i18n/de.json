@@ -1,4 +1,6 @@
 {
-  "title": "Hallo!",
-  "message": "das ist Deutsch"
+  "title": "Programmier zitate",
+  "message": "Deutsch",
+  "fetch_button": "Erhalten Sie Zitat",
+  "welcome": "Hallo!"
 }

@@ -1,4 +1,6 @@
 {
-  "title": "Witam!",
-  "message": "To jest Polski"
+  "title": "Programistyczne cytaty",
+  "fetch_button": "pobierz cytat",
+  "welcome": "Witam!",
+  "message": "Polski"
 }

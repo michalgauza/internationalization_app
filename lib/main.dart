@@ -1,40 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:internationalization_app/app_language_provider.dart';
-import 'package:internationalization_app/app_localizations.dart';
+import 'package:internationalization_app/home/quote_provider.dart';
+import 'package:internationalization_app/net/api_repo.dart';
+import 'package:internationalization_app/utils/app_language_provider.dart';
+import 'package:internationalization_app/utils/app_localizations.dart';
+import 'package:internationalization_app/utils/colors.dart';
+import 'package:internationalization_app/home/ui/home_page.dart';
 import 'package:provider/provider.dart';
+
+const List<Locale> supportedLocales = [
+  const Locale("en", "US"),
+  const Locale("pl", "PL"),
+  const Locale("de", "DE"),
+  const Locale("fr", "FR"),
+];
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLanguageProvider appLanguageProvider = AppLanguageProvider();
   await appLanguageProvider.fetchLocale();
+  ApiRepo apiRepo = ApiRepo();
   runApp(App(
     appLanguageProvider: appLanguageProvider,
+    apiRepo: apiRepo,
   ));
 }
 
 class App extends StatelessWidget {
   final AppLanguageProvider appLanguageProvider;
+  final ApiRepo apiRepo;
 
-  const App({@required this.appLanguageProvider})
-      : assert(appLanguageProvider != null);
+  const App({@required this.appLanguageProvider, @required this.apiRepo})
+      : assert(appLanguageProvider != null),
+        assert(apiRepo != null);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: appLanguageProvider),
+        ChangeNotifierProvider(
+          create: (_) => QuoteProvider(apiRepo),
+        ),
       ],
       child: Consumer<AppLanguageProvider>(
-        builder: (BuildContext context, value, Widget child) {
+        builder: (BuildContext context, appLanguageProvider, Widget child) {
           return MaterialApp(
-            locale: value.appLocale,
-            supportedLocales: [
-              Locale("en", "US"),
-              Locale("pl", "PL"),
-              Locale("de", "DE"),
-              Locale("fr", "FR"),
-            ],
+            locale: appLanguageProvider.appLocale,
+            supportedLocales: supportedLocales,
             localizationsDelegates: [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
@@ -42,74 +55,13 @@ class App extends StatelessWidget {
             ],
             title: 'internationalization app',
             theme: ThemeData(
-              primarySwatch: Colors.blue,
+              primarySwatch: AppColors.materialGrey,
               visualDensity: VisualDensity.adaptivePlatformDensity,
+              accentColor: Colors.white,
             ),
-            home: HomePage(title: 'internationalization app'),
+            home: HomePage(),
           );
         },
-      ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  HomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    print('HomePage build');
-    AppLanguageProvider appLanguageProvider =
-        Provider.of<AppLanguageProvider>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(AppLocalizations.of(context).translate("title"), style: TextStyle(fontSize: 32),),
-          ],
-        ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              appLanguageProvider.changeLanguage(Locale("pl"));
-            },
-            tooltip: 'PL',
-            child: Text("PL"),
-          ),
-          const SizedBox(width: 8),
-          FloatingActionButton(
-            onPressed: () {
-              appLanguageProvider.changeLanguage(Locale("en"));
-            },
-            tooltip: 'EN',
-            child: Text("EN"),
-          ),
-          const SizedBox(width: 8),
-          FloatingActionButton(
-            onPressed: () {
-              appLanguageProvider.changeLanguage(Locale("de"));
-            },
-            tooltip: 'DE',
-            child: Text("DE"),
-          ),
-          const SizedBox(width: 8),
-          FloatingActionButton(
-            onPressed: () {
-              appLanguageProvider.changeLanguage(Locale("fr"));
-            },
-            tooltip: 'FR',
-            child: Text("FR"),
-          ),
-        ],
       ),
     );
   }

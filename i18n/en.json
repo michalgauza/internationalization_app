@@ -1,4 +1,6 @@
 {
-  "title": "Hello!",
-  "message": "This is English"
+  "title": "Programming quotes",
+  "message": "English",
+  "fetch_button": "get quote",
+  "welcome": "Hello!"
 }
